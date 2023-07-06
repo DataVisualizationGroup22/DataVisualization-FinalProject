@@ -3,22 +3,30 @@ import pandas as pd
 import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
+
 st.set_option('deprecation.showPyplotGlobalUse', False)
 
 data = pd.read_csv('VN_housing_dataset_preprocessing.csv')
 
-st.title('Dashboard')
+st.sidebar.header('Điền vào tên dashboard')
 
-a1, a2 = st.columns(2)
+select_attr = st.sidebar.selectbox('Attributes', ('Quận', 'Loại hình nhà ở', 'Giấy tờ pháp lý', 'Số tầng', 'Số phòng ngủ', 'Diện tích', 'Dáng nhà'))
 
-with a1:
-    data_district = data.groupby('Quận')['Giá'].mean().reset_index()
-    data_district = data_district.sort_values('Giá', ascending=False)
-    plt.bar(data_district.index, data_district['Giá'])
-    plt.xticks(rotation=90)
-    st.pyplot()
-with a2:
-    data['Ngày'] = pd.to_datetime(data['Ngày'])
-    data_monthly = data.groupby(data['Ngày'].dt.to_period('M'))['Giá'].mean().reset_index()
-    data_monthly.plot(x='Ngày', y='Giá', kind='line', rot=90)
-    st.pyplot()
+def line_chart(attr):
+    data_copy = data.copy()
+    data_copy['Ngày'] = pd.to_datetime(data['Ngày'])
+    data_copy['Tháng'] = data_copy['Ngày'].dt.to_period('M').astype(str)
+    line_df = data_copy.groupby(['Tháng', attr])['Giá'].mean().reset_index().pivot_table(index='Tháng', columns=attr, values='Giá').fillna(0)
+    st.line_chart(line_df)
+
+def bar_chart(attr):
+    data_copy = data.copy()
+    bar_df = data_copy.groupby([attr])['Giá'].mean()
+    st.bar_chart(bar_df)
+
+line_chart(select_attr)
+col1, col2 = st.columns(2)
+with col1:
+    st.write('Thêm bản đồ TP Hà Nội')    
+with col2:
+    bar_chart(select_attr)
