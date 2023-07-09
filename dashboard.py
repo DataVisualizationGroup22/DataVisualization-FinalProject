@@ -9,11 +9,12 @@ from unidecode import unidecode
 st.set_option('deprecation.showPyplotGlobalUse', False)
 st.set_page_config(layout='wide', initial_sidebar_state='expanded')
 
+
 # Đọc các tệp chứa dữ liệu cần thiết
 df = pd.read_csv('dataset/house_preprocessing_for_dashboard.csv', index_col=0)
 gdf = gpd.read_file('hanoi_map/geo_hanoi_map.geojson')
 
-st.sidebar.header('Điền vào tên dashboard')
+st.sidebar.header('Tùy chọn')
 
 
 
@@ -58,6 +59,8 @@ def hanoi_map(attr, value, range):
 
 
 def dashboard():
+    title = '<h1 style="text-align:center; color:#47C7DA">Tên dashboard</h1>'
+    st.markdown(title, unsafe_allow_html=True)
     select_attr = st.sidebar.selectbox('Chọn cột', ('Quận', 'Loại hình nhà ở', 'Giấy tờ pháp lý', 'Số tầng', 'Số phòng ngủ', 'Diện tích (m2)', 'Dáng nhà'))
 
     all_value = list(df[select_attr].unique())
@@ -75,11 +78,13 @@ def dashboard():
 
 
 def overview():
-    st.title('Overview')
+    title = '<h1 style="text-align:center; color:#47C7DA">Overview</h1>'
+    st.markdown(title, unsafe_allow_html=True)
     # Add content for page 2
 
 def insight():
-    st.title('Insight')
+    title = '<h1 style="text-align:center; color:#47C7DA">Insight</h1>'
+    st.markdown(title, unsafe_allow_html=True)
 
 # Create a session state class to manage page selection
 class SessionState:
@@ -92,7 +97,7 @@ state = SessionState()
 # Define the main function to handle page selection
 def main():
     # Add a selection box to choose the page
-    page = st.sidebar.selectbox("Select Page", ["Overview", "Insight", "Dashboard"])
+    page = st.sidebar.selectbox("Chọn trang", ["Overview", "Insight", "Dashboard"])
 
     # Set the current page in the session state
     if page == "Overview":
