@@ -1,6 +1,6 @@
 import streamlit as st
-# import matplotlib.pyplot as plt
-# import mpld3
+import matplotlib.pyplot as plt
+import mpld3
 import pandas as pd
 import geopandas as gpd
 from unidecode import unidecode
@@ -53,11 +53,11 @@ def hanoi_map(attr, value, range):
     hanoi_df = hanoi_df.merge(gdf, on='Quận', how='left')
     hanoi_df = gpd.GeoDataFrame(hanoi_df[['Giá/m2 (triệu)', 'geometry']])
 
-    # fig, ax = plt.subplots()
-    hanoi_df.plot(column='Giá/m2 (triệu)', cmap='OrRd', linewidth=0.8, edgecolor='0.8', legend=True) #, ax=ax)
+    fig, ax = plt.subplots()
+    hanoi_df.plot(column='Giá/m2 (triệu)', cmap='OrRd', linewidth=0.8, edgecolor='0.8', legend=True , ax=ax)
     st.pyplot()
-    # html = mpld3.fig_to_html(fig)
-    # st.components.v1.html(html, height=500)
+    html = mpld3.fig_to_html(fig)
+    st.components.v1.html(html, height=500)
     
 line_chart(select_attr, select_value, select_range)
 col1, col2 = st.columns(2)
