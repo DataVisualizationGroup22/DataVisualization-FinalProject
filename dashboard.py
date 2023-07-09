@@ -7,6 +7,7 @@ from unidecode import unidecode
 
 # Không hiện thông báo PyplotGlobalUseWarning
 st.set_option('deprecation.showPyplotGlobalUse', False)
+st.set_page_config(layout='wide', initial_sidebar_state='expanded')
 
 # Đọc các tệp chứa dữ liệu cần thiết
 df = pd.read_csv('dataset/house_preprocessing_for_dashboard.csv', index_col=0)
@@ -21,9 +22,10 @@ select_value = st.sidebar.multiselect('Chọn các mục', options=['Tất cả'
 if 'Tất cả' in select_value:
     select_value = all_value
 
-select_range = st.sidebar.slider('Chọn khoảng giá trị', df['Giá/m2 (triệu)'].min(), df['Giá/m2 (triệu)'].max(), (df['Giá/m2 (triệu)'].min(), df['Giá/m2 (triệu)'].max()))
+select_range = st.sidebar.slider('Chọn khoảng giá trị', float(df['Giá/m2 (triệu)'].min()), float(df['Giá/m2 (triệu)'].max()), (float(df['Giá/m2 (triệu)'].min()), float(df['Giá/m2 (triệu)'].max())))
 
 def line_chart(attr, value, range):
+    st.markdown('### Map 1')
     df_copy = df.copy()
     df_copy = df_copy[df_copy[attr].isin(value)]
     df_copy = df_copy[(df_copy['Giá/m2 (triệu)'] >= range[0]) & (df_copy['Giá/m2 (triệu)'] <= range[1])]
@@ -34,6 +36,7 @@ def line_chart(attr, value, range):
     st.line_chart(line_df)
 
 def bar_chart(attr, value, range):
+    st.markdown('### Map 3')
     df_copy = df.copy()
     df_copy = df_copy[df_copy[attr].isin(value)]
     df_copy = df_copy[(df_copy['Giá/m2 (triệu)'] >= range[0]) & (df_copy['Giá/m2 (triệu)'] <= range[1])]
@@ -42,6 +45,7 @@ def bar_chart(attr, value, range):
     st.bar_chart(bar_df)
 
 def hanoi_map(attr, value, range):
+    st.markdown('### Map 2')
     df_copy = df.copy()
     df_copy = df_copy[df_copy[attr].isin(value)]
     df_copy = df_copy[(df_copy['Giá/m2 (triệu)'] >= range[0]) & (df_copy['Giá/m2 (triệu)'] <= range[1])]
@@ -58,6 +62,7 @@ def hanoi_map(attr, value, range):
     st.pyplot()
     html = mpld3.fig_to_html(fig)
     st.components.v1.html(html, height=500)
+
     
 line_chart(select_attr, select_value, select_range)
 col1, col2 = st.columns(2)
