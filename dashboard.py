@@ -15,14 +15,7 @@ gdf = gpd.read_file('hanoi_map/geo_hanoi_map.geojson')
 
 st.sidebar.header('Điền vào tên dashboard')
 
-select_attr = st.sidebar.selectbox('Chọn cột', ('Quận', 'Loại hình nhà ở', 'Giấy tờ pháp lý', 'Số tầng', 'Số phòng ngủ', 'Diện tích (m2)', 'Dáng nhà'))
 
-all_value = list(df[select_attr].unique())
-select_value = st.sidebar.multiselect('Chọn các mục', options=['Tất cả'] + all_value, default='Tất cả')
-if 'Tất cả' in select_value:
-    select_value = all_value
-
-select_range = st.sidebar.slider('Chọn khoảng giá trị', float(df['Giá/m2 (triệu)'].min()), float(df['Giá/m2 (triệu)'].max()), (float(df['Giá/m2 (triệu)'].min()), float(df['Giá/m2 (triệu)'].max())))
 
 def line_chart(attr, value, range):
     st.markdown('### Map 1')
@@ -63,10 +56,55 @@ def hanoi_map(attr, value, range):
     html = mpld3.fig_to_html(fig)
     st.components.v1.html(html, height=500)
 
-    
-line_chart(select_attr, select_value, select_range)
-col1, col2 = st.columns(2)
-with col1:
-    hanoi_map(select_attr, select_value, select_range)
-with col2:
-    bar_chart(select_attr, select_value, select_range)
+
+def dashboard():
+    select_attr = st.sidebar.selectbox('Chọn cột', ('Quận', 'Loại hình nhà ở', 'Giấy tờ pháp lý', 'Số tầng', 'Số phòng ngủ', 'Diện tích (m2)', 'Dáng nhà'))
+
+    all_value = list(df[select_attr].unique())
+    select_value = st.sidebar.multiselect('Chọn các mục', options=['Tất cả'] + all_value, default='Tất cả')
+    if 'Tất cả' in select_value:
+        select_value = all_value
+
+    select_range = st.sidebar.slider('Chọn khoảng giá trị', float(df['Giá/m2 (triệu)'].min()), float(df['Giá/m2 (triệu)'].max()), (float(df['Giá/m2 (triệu)'].min()), float(df['Giá/m2 (triệu)'].max())))
+    line_chart(select_attr, select_value, select_range)
+    col1, col2 = st.columns(2)
+    with col1:
+        hanoi_map(select_attr, select_value, select_range)
+    with col2:
+        bar_chart(select_attr, select_value, select_range)
+
+
+def overview():
+    st.title('Overview')
+    # Add content for page 2
+
+def insight():
+    st.title('Insight')
+
+# Create a session state class to manage page selection
+class SessionState:
+    def __init__(self):
+        self.page = None
+
+# Create an instance of the session state
+state = SessionState()
+
+# Define the main function to handle page selection
+def main():
+    # Add a selection box to choose the page
+    page = st.sidebar.selectbox("Select Page", ["Overview", "Insight", "Dashboard"])
+
+    # Set the current page in the session state
+    if page == "Overview":
+        state.page = overview
+    elif page == "Insight":
+        state.page = insight
+    elif page == "Dashboard":
+        state.page = dashboard
+
+    # Call the current page function
+    state.page()
+
+# Run the application
+if __name__ == '__main__':
+    main()
