@@ -4,6 +4,7 @@ import mpld3
 import pandas as pd
 import geopandas as gpd
 from unidecode import unidecode
+from PIL import Image 
 
 # Không hiện thông báo PyplotGlobalUseWarning
 st.set_option('deprecation.showPyplotGlobalUse', False)
@@ -19,7 +20,7 @@ st.sidebar.header('Tùy chọn')
 
 
 def line_chart(attr, value, range):
-    st.markdown('### Map 1')
+    st.markdown('###### Giá nhà theo năm')
     df_copy = df.copy()
     df_copy = df_copy[df_copy[attr].isin(value)]
     df_copy = df_copy[(df_copy['Giá/m2 (triệu)'] >= range[0]) & (df_copy['Giá/m2 (triệu)'] <= range[1])]
@@ -30,7 +31,7 @@ def line_chart(attr, value, range):
     st.line_chart(line_df)
 
 def bar_chart(attr, value, range):
-    st.markdown('### Map 3')
+    st.markdown('###### Giá nhà trung bình')
     df_copy = df.copy()
     df_copy = df_copy[df_copy[attr].isin(value)]
     df_copy = df_copy[(df_copy['Giá/m2 (triệu)'] >= range[0]) & (df_copy['Giá/m2 (triệu)'] <= range[1])]
@@ -39,7 +40,7 @@ def bar_chart(attr, value, range):
     st.bar_chart(bar_df)
 
 def hanoi_map(attr, value, range):
-    st.markdown('### Map 2')
+    st.markdown('###### Giá nhà thể hiện trên bản đồ')
     df_copy = df.copy()
     df_copy = df_copy[df_copy[attr].isin(value)]
     df_copy = df_copy[(df_copy['Giá/m2 (triệu)'] >= range[0]) & (df_copy['Giá/m2 (triệu)'] <= range[1])]
@@ -53,13 +54,15 @@ def hanoi_map(attr, value, range):
 
     fig, ax = plt.subplots()
     hanoi_df.plot(column='Giá/m2 (triệu)', cmap='OrRd', linewidth=0.8, edgecolor='0.8', legend=True , ax=ax)
+    plt.axis('off')
+
     st.pyplot()
     html = mpld3.fig_to_html(fig)
     st.components.v1.html(html, height=500)
 
 
 def dashboard():
-    title = '<h1 style="text-align:center; color:#47C7DA">Tên dashboard</h1>'
+    title = '<h1 style="text-align:center; color:#47C7DA">Dashboard Giá nhà ở Hà Nội</h1>'
     st.markdown(title, unsafe_allow_html=True)
     select_attr = st.sidebar.selectbox('Chọn cột', ('Quận', 'Loại hình nhà ở', 'Giấy tờ pháp lý', 'Số tầng', 'Số phòng ngủ', 'Diện tích (m2)', 'Dáng nhà'))
 
@@ -79,12 +82,32 @@ def dashboard():
 
 def overview():
     title = '<h1 style="text-align:center; color:#47C7DA">Overview</h1>'
-    st.markdown(title, unsafe_allow_html=True)
+    
     # Add content for page 2
-
-def insight():
-    title = '<h1 style="text-align:center; color:#47C7DA">Insight</h1>'
     st.markdown(title, unsafe_allow_html=True)
+    data_description = "Bài toán: Phân tích giá nhà ở tại thủ đô Hà Nội, Việt Nam."  
+    st.write(data_description)
+
+    url = "https://www.kaggle.com/datasets/ladcva/vietnam-housing-dataset-hanoi"
+    st.write("Dữ liệu về giá nhà ở được nhóm tải trực tiếp từ Kaggle (Đi đến [đường dẫn](%s))" % url)
+    st.write("Chọn mục Dashboard trên thanh công cụ bên trái để chuyển đến dashboard.")
+       
+    col1, col2, col3 = st.columns(3)
+
+    with col1:
+        st.write(' ')
+
+    with col2:
+        st.image('https://img.freepik.com/free-vector/married-couple-investing-savings-into-new-home-people-taking-credit-bank-money-buying-house-flat-vector-illustration-mortgage-ownership-property-concept-banner-landing-web-page_74855-25182.jpg?w=740&t=st=1688917220~exp=1688917820~hmac=ef63c3291cab2d83144955ba63e90a3c9bf3f0e6f0be7b1643b9d2924a1df4fa',
+        caption = "Nguồn ảnh: Freepik", width = 400)
+
+    with col3:
+        st.write(' ')
+
+
+# def insight():
+#     title = '<h1 style="text-align:center; color:#47C7DA">Insight</h1>'
+#     st.markdown(title, unsafe_allow_html=True)
 
 # Create a session state class to manage page selection
 class SessionState:
@@ -97,13 +120,13 @@ state = SessionState()
 # Define the main function to handle page selection
 def main():
     # Add a selection box to choose the page
-    page = st.sidebar.selectbox("Chọn trang", ["Overview", "Insight", "Dashboard"])
+    page = st.sidebar.selectbox("Chọn trang", ["Overview", "Dashboard"])
 
     # Set the current page in the session state
     if page == "Overview":
         state.page = overview
-    elif page == "Insight":
-        state.page = insight
+    # elif page == "Insight":
+    #     state.page = insight
     elif page == "Dashboard":
         state.page = dashboard
 
