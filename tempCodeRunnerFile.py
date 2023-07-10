@@ -34,9 +34,7 @@ def bar_chart(attr, value, range):
     df_copy = df_copy[(df_copy['Giá/m2 (triệu)'] >= range[0]) & (df_copy['Giá/m2 (triệu)'] <= range[1])]
 
     bar_df = df_copy.groupby([attr])['Giá/m2 (triệu)'].mean()
-    # plt.xticks(rotation = 45)
     st.bar_chart(bar_df)
-    
 
 def hanoi_map(attr, value, range):
     st.markdown('###### Giá nhà thể hiện trên bản đồ')
